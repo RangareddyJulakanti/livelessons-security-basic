@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,26 +20,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * you'll be prompted for authentication information.
  */
 @SpringBootApplication
+@EnableGlobalMethodSecurity(prePostEnabled=true)
 public class BasicSecurityApplication {
 
-	@Bean
-	public UserDetailsService userDetailsService(JdbcTemplate jdbcTemplate) {
-		// @formatter:off
-		RowMapper<User> userRowMapper = (ResultSet rs, int i) -> new User(
-				rs.getString("ACCOUNT_NAME"),
-				rs.getString("PASSWORD"),
-				rs.getBoolean("ENABLED"),
-				rs.getBoolean("ENABLED"),
-				rs.getBoolean("ENABLED"),
-				rs.getBoolean("ENABLED"),
-				AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
-		return username -> jdbcTemplate.queryForObject(
-				"select * from ACCOUNT where ACCOUNT_NAME = ?", userRowMapper, username);
-		// @formatter:on
-	}
+    @Bean
+    public UserDetailsService userDetailsService(JdbcTemplate jdbcTemplate) {
+        // @formatter:off
+        RowMapper<User> userRowMapper = (ResultSet rs, int i) -> new User(
+                rs.getString("ACCOUNT_NAME"),
+                rs.getString("PASSWORD"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
+        return username -> jdbcTemplate.queryForObject(
+                "select * from ACCOUNT where ACCOUNT_NAME = ?", userRowMapper, username);
+        // @formatter:on
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(BasicSecurityApplication.class, args);
-	}
+    public static void main(String[] args) {
+
+        SpringApplication.run(BasicSecurityApplication.class, args);
+    }
 
 }
